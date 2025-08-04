@@ -31,6 +31,7 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
     { id: "finance", label: "Finance Tracker", icon: DollarSign },
     { id: "yields", label: "Yield & Alerts", icon: TrendingUp },
     { id: "alerts", label: "System Alerts", icon: AlertTriangle },
+    { id: "admin", label: "Admin Control", icon: Settings },
   ];
 
   const NavItems = () => (
@@ -61,11 +62,9 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
       <aside className="hidden lg:flex flex-col w-64 bg-card border-r border-border h-screen">
         <div className="p-6 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-lg">
-              <Flower className="h-6 w-6 text-primary-foreground" />
-            </div>
+            <img src="/lovable-uploads/1cadcdbc-81cd-4843-ae86-84daa7f0a5d7.png" alt="Danfer Farm" className="h-8 w-8" />
             <div>
-              <h1 className="text-xl font-bold text-foreground">Selemo Valley</h1>
+              <h1 className="text-xl font-bold text-foreground">Danfer Farm</h1>
               <p className="text-sm text-muted-foreground">Farm Management</p>
             </div>
           </div>
@@ -90,11 +89,9 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
       {/* Mobile Navigation */}
       <header className="lg:hidden flex items-center justify-between p-4 bg-card border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary rounded-lg">
-            <Flower className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <img src="/lovable-uploads/1cadcdbc-81cd-4843-ae86-84daa7f0a5d7.png" alt="Danfer Farm" className="h-6 w-6" />
           <div>
-            <h1 className="text-lg font-bold text-foreground">Selemo Valley</h1>
+            <h1 className="text-lg font-bold text-foreground">Danfer Farm</h1>
             <p className="text-xs text-muted-foreground">Farm Management</p>
           </div>
         </div>

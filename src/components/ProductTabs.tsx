@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import GreenhouseDetail from "./GreenhouseDetail";
+import PackhouseDetail from "./PackhouseDetail";
 import { 
   Flower, 
   Sprout, 
@@ -17,6 +20,16 @@ import {
 } from "lucide-react";
 
 const ProductTabs = () => {
+  const [currentView, setCurrentView] = useState<"overview" | "greenhouse" | "packhouse">("overview");
+  const [selectedStage, setSelectedStage] = useState<string>("");
+
+  if (currentView === "greenhouse") {
+    return <GreenhouseDetail stage={selectedStage} onBack={() => setCurrentView("overview")} />;
+  }
+
+  if (currentView === "packhouse") {
+    return <PackhouseDetail onBack={() => setCurrentView("overview")} />;
+  }
   const products = [
     {
       id: "chrysanthemum",
@@ -47,6 +60,31 @@ const ProductTabs = () => {
       bgColor: "bg-blue-50"
     }
   ];
+
+  const stemData = {
+    chrysanthemum: [
+      {
+        id: "STM-001",
+        dateReceived: "2024-01-20",
+        product: "Chrysanthemum",
+        variety: "White Premium",
+        supplier: "Elite Propagation Ltd",
+        quantity: "3,000 cuttings",
+        quality: "Grade A",
+        status: "processed"
+      },
+      {
+        id: "STM-002", 
+        dateReceived: "2024-01-18",
+        product: "Chrysanthemum",
+        variety: "Yellow Standard",
+        supplier: "Premium Stems Co",
+        quantity: "2,500 cuttings",
+        quality: "Grade A",
+        status: "rooting"
+      }
+    ]
+  };
 
   const orderData = {
     chrysanthemum: [
@@ -79,7 +117,7 @@ const ProductTabs = () => {
         stage: "Rooting",
         progress: 100,
         date: "2024-01-15",
-        notes: "All cuttings rooted successfully",
+        notes: "All cuttings rooted successfully (2 weeks)",
         status: "completed"
       },
       {
@@ -90,10 +128,10 @@ const ProductTabs = () => {
         status: "completed"
       },
       {
-        stage: "Growth",
+        stage: "Growing",
         progress: 75,
         date: "Ongoing",
-        notes: "Good growth rate, optimal conditions",
+        notes: "Good growth rate, optimal conditions (12 weeks total)",
         status: "in-progress"
       },
       {
@@ -114,6 +152,53 @@ const ProductTabs = () => {
       case "in-progress": return "bg-primary text-white";
       default: return "bg-muted";
     }
+  };
+
+  const renderStemReceived = (productId: string) => {
+    const stems = stemData[productId as keyof typeof stemData] || [];
+    
+    return (
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Stem Material Received</h3>
+          <Button size="sm" className="gap-2">
+            <Plus className="h-4 w-4" />
+            Log Receipt
+          </Button>
+        </div>
+        
+        <div className="grid gap-4">
+          {stems.map((stem) => (
+            <Card key={stem.id} className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <p className="font-medium text-foreground">{stem.supplier}</p>
+                  <p className="text-sm text-muted-foreground">{stem.variety}</p>
+                  <p className="text-xs text-primary font-medium">Batch #{stem.id}</p>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-muted-foreground">Quantity & Quality</p>
+                  <p className="font-medium">{stem.quantity}</p>
+                  <p className="text-sm text-success">{stem.quality}</p>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-muted-foreground">Date Received</p>
+                  <p className="font-medium">{stem.dateReceived}</p>
+                </div>
+                
+                <div className="flex justify-end">
+                  <Badge className={getStatusColor(stem.status)}>
+                    {stem.status}
+                  </Badge>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   const renderOrderIntake = (productId: string) => {
@@ -169,9 +254,14 @@ const ProductTabs = () => {
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">Cultivation Progress</h3>
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2"
+            onClick={() => setCurrentView("packhouse")}
+          >
             <Eye className="h-4 w-4" />
-            View Details
+            View Packhouse
           </Button>
         </div>
         
@@ -179,7 +269,21 @@ const ProductTabs = () => {
           {stages.map((stage, index) => (
             <Card key={index} className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-foreground">{stage.stage}</h4>
+                <h4 
+                  className={`font-medium text-foreground ${
+                    (stage.stage === "Planting" || stage.stage === "Growing" || stage.stage === "Harvest") 
+                      ? "cursor-pointer hover:text-primary" 
+                      : ""
+                  }`}
+                  onClick={() => {
+                    if (stage.stage === "Planting" || stage.stage === "Growing" || stage.stage === "Harvest") {
+                      setSelectedStage(stage.stage);
+                      setCurrentView("greenhouse");
+                    }
+                  }}
+                >
+                  {stage.stage}
+                </h4>
                 <Badge className={getStatusColor(stage.status)}>
                   {stage.status}
                 </Badge>
@@ -320,16 +424,17 @@ const ProductTabs = () => {
                 <div className={`p-3 rounded-lg ${product.bgColor}`}>
                   <product.icon className={`h-6 w-6 ${product.color}`} />
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">{product.name}</h2>
-                  <p className="text-muted-foreground">Production & Sales Overview</p>
-                </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">{product.name}</h2>
+                <p className="text-muted-foreground">Production & Sales Overview</p>
               </div>
-              
-              {renderOrderIntake(product.id)}
-              {renderCultivationTracker(product.id)}
-              {renderPackhouseTracker()}
-              {renderSalesRecord()}
+            </div>
+            
+            {renderStemReceived(product.id)}
+            {renderOrderIntake(product.id)}
+            {renderCultivationTracker(product.id)}
+            {renderPackhouseTracker()}
+            {renderSalesRecord()}
             </div>
           </TabsContent>
         ))}

@@ -3,6 +3,7 @@ import Navigation from "@/components/Navigation";
 import Dashboard from "@/components/Dashboard";
 import ProductTabs from "@/components/ProductTabs";
 import LabourModule from "@/components/LabourModule";
+import AdminControl from "@/components/AdminControl";
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -51,8 +52,10 @@ const Index = () => {
             <div className="mt-8 text-center text-muted-foreground">
               Alert management coming soon...
             </div>
-          </div>
-        );
+            </div>
+          );
+      case "admin":
+        return <AdminControl />;
       default:
         return <Dashboard />;
     }
