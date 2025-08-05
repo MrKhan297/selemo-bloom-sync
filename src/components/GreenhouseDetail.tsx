@@ -21,11 +21,29 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
       plannedVolume: "2,500 stems",
       variety: "White Premium Chrysanthemum",
       dateOfAction: "2024-02-01",
+      plantedDate: "2024-01-15",
+      volumePlanted: "2,500 cuttings",
+      varietiesPlanted: ["White Premium", "White Standard"],
+      projectedHarvestDate: "2024-04-10",
       projectedYield: "2,400 stems",
       actualVolume: "2,300 stems",
       supervisor: "John Makena",
       team: ["Sarah Mthembu", "Peter Ndaba", "Mary Khumalo"],
       maintenance: "David Sibeko",
+      rootingStaff: [
+        { name: "Alice Nkomo", type: "Permanent", count: 1 },
+        { name: "Ben Molefe", type: "Casual", count: 1 }
+      ],
+      plantingFarmhands: [
+        { name: "Sarah Mthembu", type: "Permanent", count: 1 },
+        { name: "Peter Ndaba", type: "Permanent", count: 1 },
+        { name: "Mary Khumalo", type: "Casual", count: 1 }
+      ],
+      harvestingFarmhands: [
+        { name: "Joseph Tema", type: "Permanent", count: 1 },
+        { name: "Grace Mbeki", type: "Casual", count: 1 },
+        { name: "Lucky Mnguni", type: "Casual", count: 1 }
+      ],
       historicalSuccess: "92% avg yield over 6 cycles",
       previousCycles: [
         { cycle: "2023-Q4", yield: "94%", volume: "2,350 stems" },
@@ -44,11 +62,26 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
       plannedVolume: "2,200 stems",
       variety: "Yellow Standard Chrysanthemum",
       dateOfAction: "2024-02-05",
+      plantedDate: "2024-01-20",
+      volumePlanted: "2,200 cuttings",
+      varietiesPlanted: ["Yellow Standard", "Yellow Premium"],
+      projectedHarvestDate: "2024-04-15",
       projectedYield: "2,100 stems",
       actualVolume: "2,000 stems",
       supervisor: "Lisa Mokoena",
       team: ["James Dlamini", "Grace Sithole"],
       maintenance: "Michael Zulu",
+      rootingStaff: [
+        { name: "Carol Zwane", type: "Permanent", count: 1 }
+      ],
+      plantingFarmhands: [
+        { name: "James Dlamini", type: "Permanent", count: 1 },
+        { name: "Grace Sithole", type: "Casual", count: 1 }
+      ],
+      harvestingFarmhands: [
+        { name: "Simon Radebe", type: "Permanent", count: 1 },
+        { name: "Thabo Letsie", type: "Casual", count: 1 }
+      ],
       historicalSuccess: "88% avg yield over 4 cycles",
       previousCycles: [
         { cycle: "2023-Q4", yield: "91%", volume: "2,002 stems" },
@@ -105,12 +138,20 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
                 <span className="font-medium">{house.availableSpace}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Variety</span>
-                <span className="font-medium">{house.variety}</span>
+                <span className="text-muted-foreground">Planted Date</span>
+                <span className="font-medium">{house.plantedDate}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Date of {stage}</span>
-                <span className="font-medium">{house.dateOfAction}</span>
+                <span className="text-muted-foreground">Volume Planted</span>
+                <span className="font-medium">{house.volumePlanted}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Varieties Planted</span>
+                <span className="font-medium">{house.varietiesPlanted.join(", ")}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Projected Harvest</span>
+                <span className="font-medium">{house.projectedHarvestDate}</span>
               </div>
             </CardContent>
           </Card>
@@ -208,6 +249,58 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
                         <Badge variant="outline">{cycle.yield}</Badge>
                         <span className="text-muted-foreground">{cycle.volume}</span>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Stage-Specific Teams
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-medium text-sm mb-2">Rooting Staff ({house.rootingStaff.length})</h4>
+                <div className="space-y-1">
+                  {house.rootingStaff.map((staff, index) => (
+                    <div key={index} className="flex justify-between items-center text-sm">
+                      <span className="font-medium">{staff.name}</span>
+                      <Badge variant={staff.type === "Permanent" ? "default" : "secondary"}>
+                        {staff.type}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-medium text-sm mb-2">Planting Farmhands ({house.plantingFarmhands.length})</h4>
+                <div className="space-y-1">
+                  {house.plantingFarmhands.map((staff, index) => (
+                    <div key={index} className="flex justify-between items-center text-sm">
+                      <span className="font-medium">{staff.name}</span>
+                      <Badge variant={staff.type === "Permanent" ? "default" : "secondary"}>
+                        {staff.type}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-medium text-sm mb-2">Harvesting Farmhands ({house.harvestingFarmhands.length})</h4>
+                <div className="space-y-1">
+                  {house.harvestingFarmhands.map((staff, index) => (
+                    <div key={index} className="flex justify-between items-center text-sm">
+                      <span className="font-medium">{staff.name}</span>
+                      <Badge variant={staff.type === "Permanent" ? "default" : "secondary"}>
+                        {staff.type}
+                      </Badge>
                     </div>
                   ))}
                 </div>
