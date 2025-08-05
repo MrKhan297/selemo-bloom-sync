@@ -16,7 +16,8 @@ import {
   Calendar,
   Thermometer,
   Droplets,
-  TrendingUp
+  TrendingUp,
+  MessageCircle
 } from "lucide-react";
 
 const ProductTabs = () => {
@@ -254,34 +255,43 @@ const ProductTabs = () => {
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">Cultivation Progress</h3>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="gap-2"
-            onClick={() => setCurrentView("packhouse")}
-          >
-            <Eye className="h-4 w-4" />
-            View Packhouse
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2"
+              onClick={() => {
+                const message = "Daily farm update needed. Please check your assigned tasks.";
+                const phoneNumber = "+27123456789"; // This would be dynamic based on team member
+                window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+              }}
+            >
+              <MessageCircle className="h-4 w-4" />
+              Send WhatsApp
+            </Button>
+            {["Rooting", "Planting", "Growing", "Harvest"].map((stage) => (
+              <Button
+                key={stage}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                onClick={() => {
+                  setSelectedStage(stage);
+                  setCurrentView("greenhouse");
+                }}
+              >
+                <Eye className="h-4 w-4" />
+                View {stage}
+              </Button>
+            ))}
+          </div>
         </div>
         
         <div className="grid gap-4">
           {stages.map((stage, index) => (
             <Card key={index} className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <h4 
-                  className={`font-medium text-foreground ${
-                    (stage.stage === "Planting" || stage.stage === "Growing" || stage.stage === "Harvest") 
-                      ? "cursor-pointer hover:text-primary" 
-                      : ""
-                  }`}
-                  onClick={() => {
-                    if (stage.stage === "Planting" || stage.stage === "Growing" || stage.stage === "Harvest") {
-                      setSelectedStage(stage.stage);
-                      setCurrentView("greenhouse");
-                    }
-                  }}
-                >
+                <h4 className="font-medium text-foreground">
                   {stage.stage}
                 </h4>
                 <Badge className={getStatusColor(stage.status)}>
@@ -318,7 +328,18 @@ const ProductTabs = () => {
 
   const renderPackhouseTracker = () => (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Packhouse & Storage</h3>
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Packhouse & Storage</h3>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="gap-2"
+          onClick={() => setCurrentView("packhouse")}
+        >
+          <Eye className="h-4 w-4" />
+          View Packhouse
+        </Button>
+      </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-4">

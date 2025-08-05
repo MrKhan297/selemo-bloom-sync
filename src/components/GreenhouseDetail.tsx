@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Users, User, Wrench, Calendar, TrendingDown, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Users, User, Wrench, Calendar, TrendingDown, AlertTriangle, History, MessageCircle } from "lucide-react";
 
 interface GreenhouseDetailProps {
   stage: string;
@@ -26,6 +26,12 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
       supervisor: "John Makena",
       team: ["Sarah Mthembu", "Peter Ndaba", "Mary Khumalo"],
       maintenance: "David Sibeko",
+      historicalSuccess: "92% avg yield over 6 cycles",
+      previousCycles: [
+        { cycle: "2023-Q4", yield: "94%", volume: "2,350 stems" },
+        { cycle: "2023-Q3", yield: "89%", volume: "2,225 stems" },
+        { cycle: "2023-Q2", yield: "96%", volume: "2,400 stems" }
+      ],
       yieldDropCauses: [
         { cause: "Aphid infestation", impact: "5% yield loss", value: "R 1,250", mitigation: "Biological pest control", cost: "R 450" },
         { cause: "Temperature fluctuation", impact: "3% yield loss", value: "R 750", mitigation: "Climate control upgrade", cost: "R 2,800" }
@@ -43,6 +49,12 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
       supervisor: "Lisa Mokoena",
       team: ["James Dlamini", "Grace Sithole"],
       maintenance: "Michael Zulu",
+      historicalSuccess: "88% avg yield over 4 cycles",
+      previousCycles: [
+        { cycle: "2023-Q4", yield: "91%", volume: "2,002 stems" },
+        { cycle: "2023-Q3", yield: "85%", volume: "1,870 stems" },
+        { cycle: "2023-Q2", yield: "88%", volume: "1,936 stems" }
+      ],
       yieldDropCauses: [
         { cause: "Nutrient deficiency", impact: "4% yield loss", value: "R 800", mitigation: "Soil amendment", cost: "R 600" }
       ]
@@ -51,6 +63,8 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
 
   const getStageInfo = () => {
     switch (stage) {
+      case "Rooting":
+        return { duration: "2 weeks", color: "text-purple-600" };
       case "Planting":
         return { duration: "Initial stage", color: "text-blue-600" };
       case "Growing":
@@ -76,7 +90,7 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
           <h2 className="text-2xl font-bold">{house.name} - {stage} Details</h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
               <CardTitle>House Overview</CardTitle>
@@ -130,9 +144,22 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Team Assignment
+              <CardTitle className="flex items-center gap-2 justify-between">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Team Assignment
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    const message = `${stage} update needed for ${house.name}. Please check your assigned tasks.`;
+                    const phoneNumber = "+27123456789"; // Dynamic based on supervisor
+                    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+                  }}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                </Button>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -153,6 +180,35 @@ const GreenhouseDetail = ({ stage, onBack }: GreenhouseDetailProps) => {
                     <Badge key={index} variant="outline" className="mr-2 mb-1">
                       {member}
                     </Badge>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="h-5 w-5" />
+                Historical Performance
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                <span className="text-sm text-muted-foreground">Overall Success Rate</span>
+                <span className="font-bold text-lg text-success">{house.historicalSuccess}</span>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Previous Cycles:</p>
+                <div className="space-y-2">
+                  {house.previousCycles.map((cycle, index) => (
+                    <div key={index} className="flex justify-between items-center text-sm">
+                      <span className="font-medium">{cycle.cycle}</span>
+                      <div className="flex gap-2">
+                        <Badge variant="outline">{cycle.yield}</Badge>
+                        <span className="text-muted-foreground">{cycle.volume}</span>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
