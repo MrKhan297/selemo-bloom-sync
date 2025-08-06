@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { HappinessIndicator, TeamHappinessOverview } from "@/components/HappinessIndicator";
 import { 
   Users, 
   Clock, 
@@ -18,7 +19,8 @@ import {
   UserCheck,
   AlertCircle,
   FileText,
-  Camera
+  Camera,
+  Heart
 } from "lucide-react";
 
 const LabourModule = () => {
@@ -34,7 +36,13 @@ const LabourModule = () => {
       payRate: "R 180/day",
       status: "active",
       hoursToday: 6.5,
-      taskToday: "Greenhouse maintenance - Block A"
+      taskToday: "Greenhouse maintenance - Block A",
+      happiness: {
+        currentRating: 4,
+        lastUpdated: "2024-01-15",
+        factors: { workload: 4, supervisor: 5, compensation: 3, workEnvironment: 4 },
+        trend: "stable" as const
+      }
     },
     {
       id: "EMP002", 
@@ -45,7 +53,13 @@ const LabourModule = () => {
       payRate: "R 25/hour",
       status: "active",
       hoursToday: 8,
-      taskToday: "Harvesting chrysanthemums"
+      taskToday: "Harvesting chrysanthemums",
+      happiness: {
+        currentRating: 3.5,
+        lastUpdated: "2024-01-14",
+        factors: { workload: 3, supervisor: 4, compensation: 3, workEnvironment: 4 },
+        trend: "declining" as const
+      }
     },
     {
       id: "EMP003",
@@ -56,7 +70,13 @@ const LabourModule = () => {
       payRate: "R 200/day", 
       status: "absent",
       hoursToday: 0,
-      taskToday: "Packaging operations"
+      taskToday: "Packaging operations",
+      happiness: {
+        currentRating: 2.5,
+        lastUpdated: "2024-01-10",
+        factors: { workload: 2, supervisor: 3, compensation: 2, workEnvironment: 3 },
+        trend: "declining" as const
+      }
     }
   ];
 
@@ -79,7 +99,7 @@ const LabourModule = () => {
   const renderOverview = () => (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Workers</CardTitle>
@@ -123,6 +143,17 @@ const LabourModule = () => {
             <p className="text-xs text-muted-foreground">Labour cost today</p>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Team Happiness</CardTitle>
+            <Heart className="h-4 w-4 text-danger" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-warning">3.3/5</div>
+            <p className="text-xs text-muted-foreground">Average team morale</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Active Workers */}
@@ -159,6 +190,16 @@ const LabourModule = () => {
                       {worker.status}
                     </Badge>
                     <span className="text-sm font-medium">{worker.payRate}</span>
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <HappinessIndicator 
+                      worker={{
+                        workerId: worker.id,
+                        workerName: worker.name,
+                        ...worker.happiness
+                      }} 
+                      isCompact={true} 
+                    />
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {worker.hoursToday}h today • {worker.taskToday}
@@ -197,6 +238,9 @@ const LabourModule = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Team Happiness Overview */}
+      <TeamHappinessOverview />
     </div>
   );
 

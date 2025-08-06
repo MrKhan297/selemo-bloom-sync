@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { AlertResponseDialog } from "@/components/AlertResponseDialog";
 import { 
   TrendingUp, 
   DollarSign, 
@@ -15,10 +17,37 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
-  Truck
+  Truck,
+  MessageSquareReply
 } from "lucide-react";
 
 const Dashboard = () => {
+  const [selectedAlert, setSelectedAlert] = useState<any>(null);
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [alertsData, setAlertsData] = useState([
+    { 
+      id: "alert-001",
+      type: "critical", 
+      message: "Irrigation system maintenance overdue - Block C", 
+      time: "2h ago",
+      response: null
+    },
+    { 
+      id: "alert-002",
+      type: "warning", 
+      message: "Low inventory: Fertilizer NPK 12:12:17", 
+      time: "4h ago",
+      response: null
+    },
+    { 
+      id: "alert-003",
+      type: "info", 
+      message: "Harvest ready: Chrysanthemum Block A", 
+      time: "6h ago",
+      response: { status: "resolved", respondedBy: "John Smith" }
+    },
+  ]);
+
   const kpis = [
     {
       title: "Revenue",
@@ -57,11 +86,29 @@ const Dashboard = () => {
     { icon: Map, label: "Farm Map", variant: "outline" as const },
   ];
 
-  const alerts = [
-    { type: "critical", message: "Irrigation system maintenance overdue - Block C", time: "2h ago" },
-    { type: "warning", message: "Low inventory: Fertilizer NPK 12:12:17", time: "4h ago" },
-    { type: "info", message: "Harvest ready: Chrysanthemum Block A", time: "6h ago" },
-  ];
+  const handleAlertClick = (alert: any) => {
+    setSelectedAlert(alert);
+    setIsAlertDialogOpen(true);
+  };
+
+  const handleAlertResponse = (alertId: string, response: any) => {
+    setAlertsData(prev => 
+      prev.map(alert => 
+        alert.id === alertId 
+          ? { ...alert, response } 
+          : alert
+      )
+    );
+  };
+
+  const getResponseStatusColor = (status?: string) => {
+    switch (status) {
+      case "attended": return "bg-success text-white";
+      case "escalated": return "bg-warning text-foreground";
+      case "resolved": return "bg-primary text-primary-foreground";
+      default: return "";
+    }
+  };
 
   const todaysTasks = [
     { task: "Quality inspection - Block B", status: "pending", time: "09:00" },
@@ -165,13 +212,35 @@ const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {alerts.map((alert, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 rounded-lg border">
+            {alertsData.map((alert, index) => (
+              <div key={index} className="flex items-start gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors">
                 <div className={`h-3 w-3 rounded-full ${getStatusColor(alert.type)} mt-1`} />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-foreground">{alert.message}</p>
-                  <p className="text-xs text-muted-foreground">{alert.time}</p>
+                  <button
+                    onClick={() => handleAlertClick(alert)}
+                    className="text-left w-full group"
+                  >
+                    <p className="text-sm font-medium text-foreground group-hover:text-primary underline-offset-4 group-hover:underline">
+                      {alert.message}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{alert.time}</p>
+                    {alert.response && (
+                      <div className="mt-2">
+                        <Badge className={getResponseStatusColor(alert.response.status)}>
+                          {alert.response.status} by {alert.response.respondedBy}
+                        </Badge>
+                      </div>
+                    )}
+                  </button>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleAlertClick(alert)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <MessageSquareReply className="h-4 w-4" />
+                </Button>
               </div>
             ))}
           </CardContent>
@@ -239,6 +308,14 @@ const Dashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Alert Response Dialog */}
+      <AlertResponseDialog
+        alert={selectedAlert}
+        isOpen={isAlertDialogOpen}
+        onClose={() => setIsAlertDialogOpen(false)}
+        onSubmitResponse={handleAlertResponse}
+      />
     </div>
   );
 };
